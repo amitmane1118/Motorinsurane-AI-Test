@@ -112,6 +112,8 @@ public final class MainActivity extends Activity {
         } catch (RuntimeException e) { status.setText(e.getMessage()); }
     }
     private void dial(String n,boolean retry) {
+        if (checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+            throw new SecurityException("Call permission is required.");
         store.reserve(n,retry); // Durable reservation BEFORE any external dialer handoff.
         launched=true; launchElapsed=android.os.SystemClock.elapsedRealtime();
         try {
