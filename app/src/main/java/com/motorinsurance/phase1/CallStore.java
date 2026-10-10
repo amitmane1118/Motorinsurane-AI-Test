@@ -13,6 +13,7 @@ final class CallStore {
     CallStore(Context c) { context = c.getApplicationContext(); p = context.getSharedPreferences("call_guard", Context.MODE_PRIVATE); }
     private int boot() { return Settings.Global.getInt(context.getContentResolver(), Settings.Global.BOOT_COUNT, -1); }
     boolean pending() { return p.getBoolean("pending", false); }
+    @android.annotation.SuppressLint("MissingPermission")
     boolean inCall() {
         if (context.checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) != android.content.pm.PackageManager.PERMISSION_GRANTED)
             throw new SecurityException("Phone permission is required to verify call state.");
