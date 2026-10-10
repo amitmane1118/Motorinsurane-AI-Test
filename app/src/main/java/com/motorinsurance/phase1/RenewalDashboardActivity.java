@@ -86,7 +86,7 @@ public final class RenewalDashboardActivity extends Activity {
         privacy.setPadding(dp(2), dp(7), dp(2), dp(10));
         content.addView(privacy, matchWrap());
 
-        countLabel = text(customers.isEmpty() ? "YOUR RENEWAL OVERVIEW" : "YOUR RENEWAL OVERVIEW  ·  " + customers.size() + " UNIQUE NUMBERS", 12, MUTED, true);
+        countLabel = text(customers.isEmpty() ? "YOUR RENEWAL OVERVIEW" : "YOUR RENEWAL OVERVIEW  ·  " + customers.size() + " POLICIES", 12, MUTED, true);
         countLabel.setPadding(dp(2), dp(11), 0, dp(10));
         content.addView(countLabel, matchWrap());
         addMetrics();
@@ -207,7 +207,7 @@ public final class RenewalDashboardActivity extends Activity {
                 String key = phone.replaceAll("[^0-9]", "");
                 if (key.startsWith("91") && key.length() == 12) key = key.substring(2);
                 if (key.startsWith("0") && key.length() == 11) key = key.substring(1);
-                if (key.length() != 10 || key.charAt(0) < '6' || key.charAt(0) > '9') continue;
+                if (key.length() != 10 || key.charAt(0) < '6' || key.charAt(0) > '9') continue; key += "|" + value(row, ix, "reg no") + "|" + value(row, ix, "renewal date");
                 Customer c = byPhone.get(key);
                 if (c == null) {
                     c = new Customer(); c.phone = phone; c.owner = value(row, ix, "owner name");
