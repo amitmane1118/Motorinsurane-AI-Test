@@ -1,44 +1,25 @@
-# Motor Insurance SIM Calling Test — Phase 1
+# Motor Insurance Renewals — On-device Preview
 
-Android 16 (compile/target API 36), Java 17, AGP 8.10.1, Gradle 8.11.1. Minimum Android 8. No laptop installation is needed: GitHub Actions builds the debug APK.
+An Android 16-compatible private renewal overview. It imports a CSV exported by the owner from their private Google Sheet, parses renewal dates as **DD-MM-YYYY**, groups repeat vehicle records by mobile number, and shows upcoming/overdue counts and customer cards. Imported data stays in memory for the current app session; there is no server connection or public customer data.
 
-## Scope
-- Start queue initiates ordinary SIM calls, one attempt per unique Indian mobile number per India calendar day (Asia/Kolkata).
-- Local, +91, 91, 0091 and leading-zero formats normalize to the same identity.
-- Repeated input is deduplicated; previous same-day attempts are skipped.
-- Failed/unanswered/cancelled attempts still consume the automatic attempt. No automatic redial.
-- Every retry requires Call Again followed by Confirm; the number must have a previous attempt.
-- All calls, including retries, wait at least 60 seconds after call end. An active call blocks dispatch.
-- The queue runs only while this app is visible. Return from the phone app after each call; the queue resumes after the gap. App/process restart stops the in-memory queue.
-- System phone-state events persist end time while the dialer is foreground. If events are missed, returning to the app starts a conservative fresh 60-second gap.
-- If SIM selection is shown, choose the SIM in the system dialer. No default-dialer takeover.
+## Current boundaries
 
-This app does NOT capture/inject cellular audio, record calls, use AI APIs, or make AI speak over a normal SIM call. You speak yourself. Dashboard, Sheets, AI telephony and WhatsApp are later phases.
+- This build is a customer-list and renewal overview. It does not place calls, speak with customers, record/transcribe audio, or update the source Google Sheet.
+- It does not access Google sign-in or Sheets directly. Export the `Sheet1` tab as CSV and select that file with **Import private Sheet CSV**.
+- NCB shown from the customer's previous-year claim response is an estimate only. Confirm claim-free history, the applicable insurer wording, add-ons and the policy schedule before quoting.
+- The dashboard is inside the Android app. No customer dashboard tab is required in the Google Sheet.
+- No Android call, microphone, contacts, call-log or Internet permissions are requested.
 
-## Download and install
-Open Actions → Android Phase-1 APK → latest successful run → Artifacts → MotorInsurance-Phase1-APK. Download/unzip and install app-debug.apk on the SIM-capable Samsung device. This is a debug-signed test build, not a Play Store release. Only enable APK installation for the trusted download source if your device policy permits.
+## Use
 
-Grant Call and Phone permissions with the app button. Enter only authorized test numbers on the device, one per line. Press Start queue; after each call, end it in the phone app and return. Stop queue cancels future dispatch, but does not end an active SIM call.
+In Google Sheets, open the customer tab and download/export it as CSV. In the app, tap **Import private Sheet CSV** and choose the downloaded file. Renewal dates such as `12-10-2026` mean 12 October 2026. The app groups rows sharing a mobile number and shows only one customer card for that number.
 
-## Device acceptance checklist
-1. Verify Android 16 installation, permissions granted/denied and real voice-capable SIM support.
-2. Enter the same authorized number in different accepted formats: only one automatic attempt.
-3. End a call and confirm the next number waits 60 seconds. Confirm no dispatch with app backgrounded.
-4. Busy, rejected and unanswered calls must never retry automatically.
-5. Same-day restart retains duplicate protection. Clear app data/reinstall removes local history.
-6. Call Again → Cancel makes no call. Confirm before cooldown completion stays blocked. Confirm after the gap requests one retry.
-7. Restart/kill during a call, return after end: no resumed queue and a conservative cooldown.
-8. Check two SIMs, incoming calls, SIM selection cancellation and device reboot.
-9. India midnight permits a new automatic attempt. Backward time changes are blocked; use automatic device date/time.
-
-CI checks rule tests, Android lint and APK compilation. Real Samsung/SIM behavior is NOT proven by a cloud build; complete these checks on the device.
-
-## Privacy and limitations
-No real numbers, customers, credentials, API keys or secrets belong in this public repository. Test inputs remain in memory; only SHA-256 number/day markers and timing are persisted in private app storage, with backup disabled. Hashes are not encryption; device access should be protected. No network permission, contacts, call-log or microphone access. No number logging, analytics or export. Screenshots are blocked by the app.
-
-Daily protection is per installation/device, not centrally enforced. Clearing storage, reinstalling or deliberately manipulating the device clock can defeat local history. Use automatic date/time. Queue continuation depends on returning to the visible app due to Android background activity restrictions. This is a controlled Phase-1 test, not unattended production dialing.
+To refresh after Sheet edits, export and import the CSV again. The app discards the imported list when it closes. The source Google Sheet remains the record of truth.
 
 ## Build
-The cloud workflow installs SDK 36 and Gradle, then runs:
-`gradle --no-daemon testDebugUnitTest lintDebug assembleDebug`
-No secrets are required. APK and verification reports are saved as Actions artifacts. Local developers with Android SDK/JDK/Gradle already available can run the same command.
+
+Android SDK API 36, Java 17, AGP 8.10.1 and Gradle 8.11.1. GitHub Actions builds the debug APK and saves it as an artifact; no laptop Android installation is required. CI success verifies compilation and lint only. It does not enable or certify AI calling, insurance solicitation, or insurer-approved scripts.
+
+## Privacy
+
+This public repository contains source code only. Do not upload customer CSVs, policy schedules, real phone numbers, credentials, or API keys to it. The app blocks screenshots, has backup disabled, requests no network permission, and keeps imported customer values in app memory only.
