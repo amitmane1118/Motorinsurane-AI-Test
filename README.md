@@ -1,6 +1,6 @@
 # Motor Insurance SIM Calling Test — Phase 1
 
-Android 16 (compile/target API 36), Java 17, AGP 8.9.3, Gradle 8.11.1. Minimum Android 8. No laptop installation is needed: GitHub Actions builds the debug APK.
+Android 16 (compile/target API 36), Java 17, AGP 8.10.1, Gradle 8.11.1. Minimum Android 8. No laptop installation is needed: GitHub Actions builds the debug APK.
 
 ## Scope
 - Start queue initiates ordinary SIM calls, one attempt per unique Indian mobile number per India calendar day (Asia/Kolkata).
